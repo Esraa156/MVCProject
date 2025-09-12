@@ -1,0 +1,24 @@
+﻿@* @model IEnumerable<MVCProject.Models.Appointment>
+
+<h2>Appointments</h2>
+
+<table class="table table-striped">
+    <tr>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Length</th>
+    </tr>
+    @foreach (var app in Model)
+    {
+        <tr>
+            <td>@app.Patient.Name</td>
+            <td>@app.Doctor.Name</td>
+            <td>@app.AppointmentDate.ToShortDateString()</td>
+            <td>@app.AppointmentTime.ToString(@"hh\:mm")</td>
+            <td>@app.VisitLength</td>
+        </tr>
+    }
+</table>
+ *@

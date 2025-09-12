@@ -1,0 +1,51 @@
+﻿@* @model IEnumerable<MVCProjectDa.Appointment>
+@{
+    ViewBag.Title = "New Appointment";
+}
+
+<h2>New Appointment</h2>
+
+<form asp-action="Create" method="post">
+    <h3>Patient Info</h3>
+    <input type="text" name="Name" placeholder="Patient Name" required /><br />
+    <input type="date" name="BirthDate" required /><br />
+    <input type="text" name="ContactInfo" placeholder="Contact Info" required /><br />
+
+    <h3>Appointment</h3>
+    <select id="DoctorDropdown" name="DoctorID" required>
+        <option value="">Select Doctor</option>
+        @foreach (var doc in ViewBag.Doctors)
+        {
+            <option value="@doc.Value">@doc.Text</option>
+        }
+    </select><br />
+
+    <input type="date" id="AppointmentDate" name="AppointmentDate" required /><br />
+
+    <select id="TimeSlotDropdown" name="AppointmentTime" required>
+        <option value="">Select Time Slot</option>
+    </select><br />
+
+    <input type="number" name="VisitLength" value="30" /><br />
+    <button type="submit">Save Appointment</button>
+</form>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $("#DoctorDropdown, #AppointmentDate").change(function () {
+            var doctorId = $("#DoctorDropdown").val();
+            var date = $("#AppointmentDate").val();
+            if (doctorId && date) {
+                $.getJSON('@Url.Action("GetAvailableSlots")', { doctorId: doctorId, date: date }, function (data) {
+                    var slots = $("#TimeSlotDropdown");
+                    slots.empty();
+                    $.each(data, function (i, time) {
+                        slots.append('<option value="' + time + '">' + time + '</option>');
+                    });
+                });
+            }
+        });
+    </script>
+}
+ *@
