@@ -26,42 +26,71 @@ namespace MVCProject.BLL.Services
 			_idProtector = idProtector;
 
         }
-		//public async Task<IdentityResult> CreateSecretaryAsync(SecrtaryViewModel model)
-		//{
-		//	var user = new ApplicationUser
-		//	{
-		//		UserName = email,
-		//		Email = email,
-		//		FirstName = firstName,
-		//		LastName = lastName
-		//	};
+        //public async Task<IdentityResult> CreateSecretaryAsync(SecrtaryViewModel model)
+        //{
+        //	var user = new ApplicationUser
+        //	{
+        //		UserName = email,
+        //		Email = email,
+        //		FirstName = firstName,
+        //		LastName = lastName
+        //	};
 
-		//	var result = await _userManager.CreateAsync(user, password);
-		//	if (result.Succeeded)
-		//		await _userManager.AddToRoleAsync(user, "Secretary");
+        //	var result = await _userManager.CreateAsync(user, password);
+        //	if (result.Succeeded)
+        //		await _userManager.AddToRoleAsync(user, "Secretary");
 
-		//	return result;
-		//}
+        //	return result;
+        //}
 
-		public async Task<IdentityResult> CreateDoctorAsync(DoctorDTO model)
-		{
+        public async Task<IdentityResult> CreateUserAsync(UserDto model, string role)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = model.UserName,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Specialization = model.Specialization
+            };
 
-			var user = new ApplicationUser
-			{
-				UserName = model.UserName,
-				Email = model.Email,
-				FirstName = model.FirstName,
-				LastName = model.LastName,
-				Specialization = model.Specialization
-			};
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+                await _userManager.AddToRoleAsync(user, role);
 
-			var result = await _userManager.CreateAsync(user, model.Password);
-			if (result.Succeeded)
-				await _userManager.AddToRoleAsync(user, "Doctor");
+            return result;
+        }
 
-			return result;
-		}
-		public async Task<List<IndexDoctorDto>> GetAllDoctorsAsync()
+
+        public Task<IdentityResult> CreateDoctorAsync(UserDto model)
+        {
+            return CreateUserAsync(
+                model,
+                "Doctor"
+            );
+        }
+
+
+
+        //      public async Task<IdentityResult> CreateDoctorAsync(DoctorDTO model)
+        //{
+
+        //	var user = new ApplicationUser
+        //	{
+        //		UserName = model.UserName,
+        //		Email = model.Email,
+        //		FirstName = model.FirstName,
+        //		LastName = model.LastName,
+        //		Specialization = model.Specialization
+        //	};
+
+        //	var result = await _userManager.CreateAsync(user, model.Password);
+        //	if (result.Succeeded)
+        //		await _userManager.AddToRoleAsync(user, "Doctor");
+
+        //	return result;
+        //}
+        public async Task<List<IndexDoctorDto>> GetAllDoctorsAsync()
 		{
 			{
 				var doctors = await _userManager.GetUsersInRoleAsync("Doctor");
