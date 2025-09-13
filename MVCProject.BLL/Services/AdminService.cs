@@ -9,7 +9,6 @@ using MVCProject.BLL.Dtos;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MVCProject.BLL.Helpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MVCProject.BLL.Services
 {
