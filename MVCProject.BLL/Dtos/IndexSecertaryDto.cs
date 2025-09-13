@@ -12,7 +12,9 @@ namespace MVCProject.BLL.Dtos
  string? Password,
  string FirstName,
  string LastName,
- string OfficeNumber
+ string OfficeNumber,
+                     string UserName
+
 
 
 );

@@ -13,6 +13,7 @@ namespace MVCProject.BLL.Dtos
         string UserName,
         string FirstName,
         string LastName,
-        string Specialization
+        string ?Specialization,
+        string OfficeNumber
     );
 }

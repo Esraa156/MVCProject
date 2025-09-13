@@ -1,0 +1,63 @@
+﻿@model MVCProject.BLL.Dtos.IndexUserDto
+
+@{
+    ViewData["Title"] = "Edit " + Model.UserType;
+    string role = "EditUser";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-lg rounded-3">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">Edit "@Model.UserType"</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="@role" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="FirstName"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="LastName"></label>
+                            <input asp-for="LastName" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="UserName"></label>
+                            <input asp-for="UserName" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email"></label>
+                            <input asp-for="Email" class="form-control" />
+                        </div>
+
+                        <!-- Doctor only -->
+                        @if (Model.UserType == "Doctor")
+                        {
+                            <div class="mb-3">
+                                <label>Specialization</label>
+                                <input asp-for="Specialization" class="form-control" />
+                            </div>
+                        }
+
+                        <!-- Secretary only -->
+                        @if (Model.UserType == "Secretary")
+                        {
+                            <div class="mb-3">
+                                <label>Office Number</label>
+                                <input asp-for="OfficeNumber" class="form-control" />
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-success w-100">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -30,12 +30,13 @@ namespace MVCProject.pl.Controllers
 
         private async Task<IActionResult> HandleCreationAsync<TDto>(
             TDto dto,
-            Func<TDto, Task<IdentityResult>> createFunc,
+            string role,
+            Func<TDto, string, Task<IdentityResult>> createFunc,
             string successMessage,
             string redirectController = "Home",
             string redirectAction = "Index")
         {
-            var result = await createFunc(dto);
+            var result = await createFunc(dto, role);
 
             if (result.Succeeded)
             {
@@ -60,12 +61,39 @@ namespace MVCProject.pl.Controllers
                 model.FirstName,
                 model.UserName,
                 model.LastName,
-                model.Specialization
+                model.Specialization,
+                ""
+
             );
 
-            return await HandleCreationAsync(dto, _adminService.CreateDoctorAsync, "Doctor created successfully!", "Admin", "IndexDoctors");
+            return await HandleCreationAsync(dto, "Doctor", _adminService.CreateUserAsync, "Doctor created successfully!", "Admin", "IndexDoctors");
         }
 
+
+        [HttpGet]
+
+        public IActionResult AddSecertary() { return View("AddSecertary"); }
+
+        [HttpPost]
+
+        public async Task<IActionResult> AddSecertary(SecrtaryViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+            
+
+            var dto = new UserDto(
+                model.Email,
+                model.Password,
+                model.UserName,
+
+                model.FirstName,
+                model.LastName,
+                "",
+                model.OfficeNumber
+            );
+
+            return await HandleCreationAsync(dto, "Secretary", _adminService.CreateUserAsync, "Secertary created successfully!", "Admin", "IndexDoctors");
+        }
 
         //[HttpPost]
         //public async Task<IActionResult> AddDoctor(DoctorViewModel model)
@@ -94,15 +122,15 @@ namespace MVCProject.pl.Controllers
         //    return View(model);
         //}
         // GET: Edit Doctor
-        public async Task<IActionResult> EditDoctor(string id)
+        public async Task<IActionResult> EditUser(string id)
         {
-            var doctor = await _adminService.GetDoctorByIdAsync(id);
-            if (doctor == null) return NotFound();
+            var user = await _adminService.GetuserByIdAsync(id);
+            if (user == null) return NotFound();
 
-            return View(doctor);
+            return View(user);
         }
         [HttpPost]
-        public async Task<IActionResult> EditDoctor(IndexDoctorDto model)
+        public async Task<IActionResult> EditUser(IndexDoctorDto model)
         {
             if (!ModelState.IsValid) return View(model);
 

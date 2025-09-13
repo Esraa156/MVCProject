@@ -50,7 +50,10 @@ namespace MVCProject.BLL.Services
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                Specialization = model.Specialization
+                Specialization = model.Specialization,
+                OfficeNumber=model.OfficeNumber
+
+                
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -61,13 +64,6 @@ namespace MVCProject.BLL.Services
         }
 
 
-        public Task<IdentityResult> CreateDoctorAsync(UserDto model)
-        {
-            return CreateUserAsync(
-                model,
-                "Doctor"
-            );
-        }
 
 
 
@@ -107,23 +103,26 @@ namespace MVCProject.BLL.Services
 
 
 		}
-        public async Task<IndexDoctorDto?> GetDoctorByIdAsync(string id)
+        public async Task<IndexUserDto?> GetuserByIdAsync(string id)
         {
             var decryptedId = _idProtector.Unprotect(id);
 
-            var doctor = await _userManager.FindByIdAsync(decryptedId);
-            if (doctor == null) return null;
+            var user = await _userManager.FindByIdAsync(decryptedId);
+            if (user == null) return null;
 
-            return new IndexDoctorDto(
-               _idProtector.Protect(doctor.Id),
-                doctor.Email,
-                                doctor.PasswordHash,
-
-                doctor.FirstName,
-                doctor.LastName,
-                doctor.Specialization,
-                doctor.UserName
-            );
+            var IsDoctor = await _userManager.IsInRoleAsync(user,"Doctor");
+            return new IndexUserDto
+            {
+                Id = _idProtector.Protect(user.Id),
+                Email = user.Email,
+                PasswordHash = user.PasswordHash,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Specialization = IsDoctor ? user.Specialization: null,
+                OfficeNumber = IsDoctor? user.OfficeNumber:null,
+                UserType= IsDoctor ? "Doctor": "Secretary"
+            };
         }
         public async Task<bool> UpdateDoctorAsync(IndexDoctorDto model)
         {
