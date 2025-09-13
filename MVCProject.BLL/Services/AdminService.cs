@@ -85,20 +85,23 @@ namespace MVCProject.BLL.Services
 
         //	return result;
         //}
-        public async Task<List<IndexDoctorDto>> GetAllDoctorsAsync()
+        public async Task<List<MVCProject.BLL.Dtos.IndexUserDto>> GetAllUsersAsync(string role)
 		{
 			{
-				var doctors = await _userManager.GetUsersInRoleAsync("Doctor");
+				var users = await _userManager.GetUsersInRoleAsync(role);
 
-                return doctors.Select(d => new IndexDoctorDto(
-            _idProtector.Protect(d.Id),
-               d.Email,
-			   d.PasswordHash,
-               d.FirstName,
-               d.LastName,
-               d.Specialization,
-               d.UserName
-           )).ToList();
+                return users.Select(d => new MVCProject.BLL.Dtos.IndexUserDto
+                {
+                 Id = _idProtector.Protect(d.Id),
+                 Email = d.Email,
+			     PasswordHash = d.PasswordHash,
+                 FirstName = d.FirstName,
+                 LastName = d.LastName,
+                 Specialization = d.Specialization,
+                 UserName = d.UserName,
+                 OfficeNumber = d.OfficeNumber
+                }
+           ).ToList();
             }
 
 
@@ -120,34 +123,35 @@ namespace MVCProject.BLL.Services
                 LastName = user.LastName,
                 UserName = user.UserName,
                 Specialization = IsDoctor ? user.Specialization: null,
-                OfficeNumber = IsDoctor? user.OfficeNumber:null,
+                OfficeNumber = IsDoctor? null : user.OfficeNumber,
                 UserType= IsDoctor ? "Doctor": "Secretary"
             };
         }
-        public async Task<bool> UpdateDoctorAsync(IndexDoctorDto model)
+        public async Task<bool> UpdateUserAsync(MVCProject.BLL.Dtos.IndexUserDto model)
         {
             var decryptedId = _idProtector.Unprotect(model.Id);
 
-            var doctor = await _userManager.FindByIdAsync(decryptedId);
-            if (doctor == null) return false;
+            var user = await _userManager.FindByIdAsync(decryptedId);
+            if (user == null) return false;
 
-            doctor.FirstName = model.FirstName;
-            doctor.LastName = model.LastName;
-            doctor.Specialization = model.Specialization;
-            doctor.UserName = model.UserName;
-            doctor.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Specialization = model.Specialization;
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.OfficeNumber = model.OfficeNumber;
 
-            var result = await _userManager.UpdateAsync(doctor);
+            var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
 
-        public async Task<bool> DeleteDoctorAsync(string id)
+        public async Task<bool> DeleteUserAsync(string id)
         {
 			var decryptedId= _idProtector.Unprotect(id);
-            var doctor = await _userManager.FindByIdAsync(decryptedId);
-            if (doctor == null) return false;
+            var user = await _userManager.FindByIdAsync(decryptedId);
+            if (user == null) return false;
 
-            var result = await _userManager.DeleteAsync(doctor);
+            var result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
         }
     }

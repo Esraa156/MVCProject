@@ -22,10 +22,11 @@ namespace MVCProject.pl.Controllers
 		}
         [HttpGet]
         public IActionResult AddDoctor() => View();
-        public async Task<IActionResult> IndexDoctors()
+        public async Task<IActionResult> IndexUsers(string role)
         {
-            var doctors = await _adminService.GetAllDoctorsAsync();
-            return View(doctors);
+            var users = await _adminService.GetAllUsersAsync(role);
+            ViewBag.Role = role;
+            return View(users);
         }
 
         private async Task<IActionResult> HandleCreationAsync<TDto>(
@@ -41,7 +42,7 @@ namespace MVCProject.pl.Controllers
             if (result.Succeeded)
             {
                 TempData["Success"] = successMessage;
-                return RedirectToAction(redirectAction, redirectController);
+                return RedirectToAction(redirectAction, redirectController, new { role = role });
             }
 
             foreach (var error in result.Errors)
@@ -66,7 +67,7 @@ namespace MVCProject.pl.Controllers
 
             );
 
-            return await HandleCreationAsync(dto, "Doctor", _adminService.CreateUserAsync, "Doctor created successfully!", "Admin", "IndexDoctors");
+            return await HandleCreationAsync(dto, "Doctor", _adminService.CreateUserAsync, "Doctor created successfully!", "Admin", "IndexUsers");
         }
 
 
@@ -92,7 +93,7 @@ namespace MVCProject.pl.Controllers
                 model.OfficeNumber
             );
 
-            return await HandleCreationAsync(dto, "Secretary", _adminService.CreateUserAsync, "Secertary created successfully!", "Admin", "IndexDoctors");
+            return await HandleCreationAsync(dto, "Secretary", _adminService.CreateUserAsync, "Secertary created successfully!", "Admin", "IndexUsers");
         }
 
         //[HttpPost]
@@ -130,11 +131,11 @@ namespace MVCProject.pl.Controllers
             return View(user);
         }
         [HttpPost]
-        public async Task<IActionResult> EditUser(IndexDoctorDto model)
+        public async Task<IActionResult> EditUser(MVCProject.BLL.Dtos.IndexUserDto model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            var success = await _adminService.UpdateDoctorAsync(model);
+            var success = await _adminService.UpdateUserAsync(model);
             if (success)
                 return RedirectToAction("IndexDoctors");
 
@@ -142,19 +143,19 @@ namespace MVCProject.pl.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> DeleteDoctor(string id)
+        public async Task<IActionResult> DeleteUser(string id, string role)
         {
-            var success = await _adminService.DeleteDoctorAsync(id);
+            var success = await _adminService.DeleteUserAsync(id);
             if (!success)
             {
-                TempData["Error"] = "Doctor not found or could not be deleted.";
+                TempData["Error"] = role + " not found or could not be deleted.";
             }
             else
             {
-                TempData["Success"] = "Doctor deleted successfully.";
+                TempData["Success"] = role + " deleted successfully.";
             }
 
-            return RedirectToAction("IndexDoctors");
+            return RedirectToAction("IndexUsers", new { role = role });
         }
     }
 }

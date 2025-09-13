@@ -36,10 +36,10 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="IndexDoctors">Doctors</a>
+                                <a class="nav-link" asp-controller="Admin" asp-action="IndexUsers" asp-route-role="Doctor">Doctors</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="IndexedSecretary">Secretary</a>
+                                <a class="nav-link" asp-controller="Admin" asp-action="IndexUsers" asp-route-role="Secretary">Secretary</a>
                             </li>
                         }
                     </ul>
